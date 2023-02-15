@@ -8,12 +8,32 @@ from typing import Union, Callable
 from functools import wraps
 
 
+def call_history(mthd: Callable) -> Callable:
+    '''
+    Records the history of a wrapped function inputs
+    '''
+    list_in = "{}:inputs".format(mthd.__qualname__)
+    list_out = "{}:outputs".format(mthd.__qualname__)
+
+    @wraps(mthd)
+    def wrapped(self, *args, **kwargs):
+        '''
+        decorated function
+        '''
+        self._redis.rpush(list_in, str(args))
+        response = mthd(self, *args, **kwargs)
+        self._redis.rpush(list_out, str(response))
+        return response
+    return wrapped
+
+
 def count_calls(mthd: Callable) -> Callable:
     '''
     wraps decorated function and stores the number
     of time method has been stored
     '''
     key = mthd.__qualname__
+
     @wraps(mthd)
     def wrapped(self, *args, **kwargs):
         '''
@@ -35,6 +55,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @call_history
     @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         '''

@@ -16,7 +16,7 @@ def call_history(mthd: Callable) -> Callable:
     list_out = "{}:outputs".format(mthd.__qualname__)
 
     @wraps(mthd)
-    def wrapped(self, *args, **kwargs):
+    def wrapped(self, *args, **kwargs) -> str:
         '''
         decorated function
         '''
@@ -35,7 +35,7 @@ def count_calls(mthd: Callable) -> Callable:
     key = mthd.__qualname__
 
     @wraps(mthd)
-    def wrapped(self, *args, **kwargs):
+    def wrapped(self, *args, **kwargs) -> str:
         '''
         decorated function
         '''

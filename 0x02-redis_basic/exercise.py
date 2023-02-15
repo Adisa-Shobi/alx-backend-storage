@@ -13,9 +13,10 @@ def count_calls(mthd: Callable) -> Callable:
     wraps decorated function and stores the number
     of time method has been stored
     '''
+    key = mthd.__qualname__
     @wraps(mthd)
     def wrapped(self, *args, **kwargs):
-        self._redis.incr(mthd.__qualname__)
+        self._redis.incr(key)
         return mthd(self, *args, **kwargs)
     return wrapped
 

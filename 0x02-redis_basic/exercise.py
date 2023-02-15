@@ -4,7 +4,7 @@ A Cache class that interfaces with redis
 '''
 import redis
 import uuid
-from typing import Union
+from typing import Union, Callable
 
 
 class Cache:
@@ -25,3 +25,24 @@ class Cache:
         id = str(uuid.uuid4())
         self._redis.set(id, data)
         return id
+
+    def get(self, key: str,
+            fn: Union[Callable, None] = None) -> Union[int, str, float]:
+        '''
+        Ensures get format is correct
+        '''
+        if fn:
+            return fn(self._redis.get(key))
+        return self._redis.get(key)
+
+    def get_str(self, key: str) -> str:
+        '''
+        Ensures get format is correct for strings
+        '''
+        return self.get(key, str)
+
+    def get_int(self, key: str) -> int:
+        '''
+        Ensures get format is correct for integers
+        '''
+        return self.get(key, int)

@@ -5,6 +5,19 @@ A Cache class that interfaces with redis
 import redis
 import uuid
 from typing import Union, Callable
+from functools import wraps
+
+
+def count_calls(mthd: Callable) -> Callable:
+    '''
+    wraps decorated function and stores the number
+    of time method has been stored
+    '''
+    @wraps(mthd)
+    def wrapped(self, *args, **kwargs):
+        self._redis.incrby(mthd.__qualname__, 1)
+        return mthd(self, *args, **kwargs)
+    return wrapped
 
 
 class Cache:
@@ -18,6 +31,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         '''
         takes a data argument and returns a string

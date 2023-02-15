@@ -25,6 +25,7 @@ def replay(mthd: Callable) -> None:
         attr, data = key.decode("utf-8"), data.decode("utf-8")
         print("{}(*{}) -> {}".format(method_key, attr, data))
 
+
 def call_history(mthd: Callable) -> Callable:
     '''
     Records the history of a wrapped function inputs

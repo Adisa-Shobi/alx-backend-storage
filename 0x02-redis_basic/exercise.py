@@ -16,6 +16,9 @@ def count_calls(mthd: Callable) -> Callable:
     key = mthd.__qualname__
     @wraps(mthd)
     def wrapped(self, *args, **kwargs):
+        '''
+        decorated function
+        '''
         self._redis.incr(key)
         return mthd(self, *args, **kwargs)
     return wrapped

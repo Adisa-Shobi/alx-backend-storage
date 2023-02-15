@@ -15,7 +15,7 @@ def count_calls(mthd: Callable) -> Callable:
     '''
     @wraps(mthd)
     def wrapped(self, *args, **kwargs):
-        self._redis.incrby(mthd.__qualname__, 1)
+        self._redis.incr(mthd.__qualname__)
         return mthd(self, *args, **kwargs)
     return wrapped
 

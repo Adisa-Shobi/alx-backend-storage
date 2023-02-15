@@ -8,6 +8,23 @@ from typing import Union, Callable
 from functools import wraps
 
 
+def replay(mthd: Callable) -> None:
+    '''
+    a replay function to display the history of calls of a particular function
+    '''
+    method_key = mthd.__qualname__
+    key_inputs = method_key + ":inputs"
+    key_outputs = method_key + ":outputs"
+    redis = mthd.__self__._redis
+    count = redis.get(method_key).decode("utf-8")
+    print("{} was called {} times:".format(method_key, count))
+    ListInput = redis.lrange(key_inputs, 0, -1)
+    ListOutput = redis.lrange(key_outputs, 0, -1)
+    allData = list(zip(ListInput, ListOutput))
+    for key, data in allData:
+        attr, data = key.decode("utf-8"), data.decode("utf-8")
+        print("{}(*{}) -> {}".format(method_key, attr, data))
+
 def call_history(mthd: Callable) -> Callable:
     '''
     Records the history of a wrapped function inputs

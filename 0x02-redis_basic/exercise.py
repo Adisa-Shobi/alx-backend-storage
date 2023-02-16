@@ -45,20 +45,20 @@ def call_history(mthd: Callable) -> Callable:
     return wrapped
 
 
-def count_calls(mthd: Callable) -> Callable:
+def count_calls(method: Callable) -> Callable:
     '''
     wraps decorated function and stores the number
     of time method has been stored
     '''
-    key = mthd.__qualname__
+    key = method.__qualname__
 
-    @wraps(mthd)
+    @wraps(method)
     def wrapped(self, *args, **kwargs) -> str:
         '''
         decorated function
         '''
         self._redis.incr(key)
-        return mthd(self, *args, **kwargs)
+        return method(self, *args, **kwargs)
     return wrapped
 
 

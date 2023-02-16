@@ -33,7 +33,7 @@ def call_history(method: Callable) -> Callable:
     list_in = "{}:inputs".format(method.__qualname__)
     list_out = "{}:outputs".format(method.__qualname__)
 
-    @wraps(mthd)
+    @wraps(method)
     def wrapped(self, *args, **kwargs) -> str:
         '''
         decorated function

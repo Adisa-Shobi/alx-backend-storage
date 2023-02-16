@@ -26,12 +26,12 @@ def replay(mthd: Callable) -> None:
         print("{}(*{}) -> {}".format(method_key, attr, data))
 
 
-def call_history(mthd: Callable) -> Callable:
+def call_history(method: Callable) -> Callable:
     '''
     Records the history of a wrapped function inputs
     '''
-    list_in = "{}:inputs".format(mthd.__qualname__)
-    list_out = "{}:outputs".format(mthd.__qualname__)
+    list_in = "{}:inputs".format(method.__qualname__)
+    list_out = "{}:outputs".format(method.__qualname__)
 
     @wraps(mthd)
     def wrapped(self, *args, **kwargs) -> str:
@@ -39,7 +39,7 @@ def call_history(mthd: Callable) -> Callable:
         decorated function
         '''
         self._redis.rpush(list_in, str(args))
-        response = mthd(self, *args, **kwargs)
+        response = method(self, *args, **kwargs)
         self._redis.rpush(list_out, str(response))
         return response
     return wrapped
